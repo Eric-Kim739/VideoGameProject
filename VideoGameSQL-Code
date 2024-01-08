@@ -1,0 +1,50 @@
+Select * 
+From VideoGameSales
+
+
+-- Looking at sales based of off genre 
+Select Genre, sum(global_sales) as TotalSales 
+From VideoGameSales
+group by genre 
+order by TotalSales desc
+
+--Looking at sales based of off location 
+Select Sum(NA_sales) AS TotalNA, 
+Sum(EU_Sales) as TotalEU, 
+Sum(JP_sales) as TotalJP, 
+Sum(Other_sales) as TotalOther
+From VideoGameSales
+
+
+--Comparing the sales by different platforms
+Select Platform, Sum(NA_sales) AS TotalNA, 
+Sum(EU_Sales) as TotalEU, 
+Sum(JP_sales) as TotalJP, 
+Sum(Other_sales) as TotalOther
+From VideoGameSales 
+Group by Platform
+Order by platform asc
+
+
+--Publisher Analysis 
+SELECT Publisher, COUNT(Name) AS TotalGames, AVG(Global_Sales) AS AvgSalesPerGame
+FROM VideoGameSales
+GROUP BY Publisher
+ORDER BY AvgSalesPerGame desc
+
+
+--Top Publisher by Sales 
+SELECT Publisher, SUM(Global_Sales) AS TotalSales
+FROM VideoGameSales
+GROUP BY Publisher
+ORDER BY TotalSales DESC;
+
+
+-- Top Selling Games Per Platform 
+SELECT Platform, Name, Global_Sales
+FROM (
+    SELECT Platform, Name, Global_Sales,
+           ROW_NUMBER() OVER (PARTITION BY Platform ORDER BY Global_Sales DESC) AS Rank
+    FROM VideoGameSales
+) AS RankedGames
+WHERE Rank <= 5; 
